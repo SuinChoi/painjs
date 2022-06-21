@@ -21,6 +21,7 @@ let filling = false;
 if(save){
     save.addEventListener("click", saveImage);
 }
+
 function saveImage(){
     console.log(save);
     const img = canvas.toDataURL('image/png');
@@ -30,13 +31,23 @@ function saveImage(){
     link.click();                               //fake click to download canvas, 가짜 클릭하기 다운로드
     
 }
+
+
+
+if(canvas){
+    canvas.addEventListener("mousemove", onMouseMove); // when mouse move
+    canvas.addEventListener("mousedown", startPainting); // when mouse click마우스 클릭했을때
+    canvas.addEventListener("mouseup", stopPainting);      // when mouse is up
+    canvas.addEventListener("mouseleave", stopPainting); // when you leave the canvas
+    canvas.addEventListener("contextmenu", contextMenu);
+}
 function startPainting(){
    
-    if(filling){
-        console.log(colors);
-        ctx.fillRect(0,0,700,700);
+    if(filling){                                              // Fill mode, 채우기 모드일때
+        //console.log(colors);
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
     }else{
-        painting = true;
+        painting = true;                                        // painting mode, 그리기 모드일때
     }
 }
 
@@ -46,17 +57,17 @@ function stopPainting(){
 
 function onMouseMove(event){
    // console.log(event);
-   const x = event.offsetX;             // get X value on the canvas
-    const y = event.offsetY;            // get Y value on the canvas
     // console.log(x,y);
 
-    if(!painting){                      // not click the mouse
+   const x = event.offsetX;             // get X value on the canvas, 캔버스 위 x값 가져오기
+    const y = event.offsetY;            // get Y value on the canvas, 캔버스 위 y값 가져오기
+   
+    if(!painting){                      // not click the mouse, 마우스 클릭안할때는 시작점만 설정
         ctx.beginPath();
         ctx.moveTo(x,y);
-    }else{                              // when click the mouse       
+    }else{                              // when click the mouse, 클릭하면 그리기 시작       
         ctx.lineTo(x,y);
-        ctx.stroke();
-        
+        ctx.stroke();       
     }
 }
 
@@ -73,13 +84,7 @@ function contextMenu(event){
     event.preventDefault();                            //prevent mouse right click
 }
 
-if(canvas){
-    canvas.addEventListener("mousemove", onMouseMove); // when mouse move
-    canvas.addEventListener("mousedown", startPainting); // when mouse click마우스 클릭했을때
-    canvas.addEventListener("mouseup", stopPainting);      // when mouse is up
-    canvas.addEventListener("mouseleave", stopPainting); // when you leave the canvas
-    canvas.addEventListener("contextmenu", contextMenu);
-}
+
 Array.from(colors).forEach(color => color.addEventListener("click", changeColor))
 
 function changeColor(event){
@@ -91,12 +96,11 @@ function changeColor(event){
     
 }
 
-
 if(mode){
     mode.addEventListener("click", changeMode);
 }
 
-function changeMode(event){
+function changeMode(event){             // set the mode either paint of fill, 그리기 채우기 모드 설정
     console.log(mode);
     if(filling === true){
         filling = false;
